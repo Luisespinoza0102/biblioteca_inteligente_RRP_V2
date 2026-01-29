@@ -1,0 +1,79 @@
+{% extends 'auth_base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/auth_style.css' %}">
+
+<div class="auth-wrapper registre">
+
+    <!-- CARD A LA DERECHA -->
+    <div class="glass-card register-card">
+
+        <!-- LOGO SUPERIOR -->
+        <div class="register-header">
+            <img src="{% static 'img/logo2.png' %}" alt="Red de Bibliotecas" class="top-logo">
+
+            <h1 class="register-title">Crea Tu Cuenta</h1>
+
+            <p class="register-text">
+                El Administrador tiene que haber registrado previamente en el sistema para poder crear tu cuenta y formar parte de la comunidad de lectores
+            </p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- CEDULA -->
+            <div class="form-row">
+                <label class="form-label">Cédula / Carnet</label>
+                <div class="input-wrapper">
+                    <input type="text" name="cedula" class="custom-input" placeholder="cédula de identidad" required>
+                </div>
+            </div>
+
+            <!-- NOMBRE -->
+            <div class="form-row">
+                <label class="form-label">Nombre</label>
+                <div class="input-wrapper">
+                    <input type="text" name="nombre" class="custom-input" placeholder="Nombre Completo" required>
+                </div>
+            </div>
+
+            <!-- CONTRASEÑA -->
+            <div class="form-row">
+                <label class="form-label">Crear Contraseña</label>
+                <div class="input-wrapper">
+                    <input type="password" name="password1" class="custom-input" placeholder="Crea tu Contraseña" required>
+                </div>
+            </div>
+
+            <!-- CONFIRMAR -->
+            <div class="form-row">
+                <label class="form-label">Confirmar Contraseña</label>
+                <div class="input-wrapper">
+                    <input type="password" name="password2" class="custom-input" placeholder="Crea tu Contraseña" required>
+                </div>
+            </div>
+
+            <!-- BOTON -->
+            <div class="form-row">
+                <label class="form-label"></label>
+                <div class="input-wrapper center-btn">
+                    <button type="submit" class="btn-submit">
+                        CREAR CUENTA
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+        <!-- ENLACE LOGIN -->
+        <div class="register-footer">
+            ¿Ya tienes cuenta? 
+            <a href="{% url 'login' %}">Inicia Sesión aquí</a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

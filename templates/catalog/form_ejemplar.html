@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto p-6 bg-slate-800 rounded-2xl mt-10 border border-slate-700 shadow-2xl">
+    <h2 class="text-2xl font-bold text-white mb-6">Registrar Ejemplar Físico</h2>
+    
+    <form method="POST" class="space-y-4">
+        {% csrf_token %}
+        
+        <div>
+            <label class="block text-slate-400 text-sm mb-1">Libro / Obra Intelectual</label>
+            <div class="[&>select]:w-full [&>select]:bg-slate-900 [&>select]:border-slate-700 [&>select]:rounded-xl [&>select]:p-3 [&>select]:text-white">
+                {{ form.libro }}
+            </div>
+            {% if form.libro.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.libro.errors.0 }}</p>
+            {% endif %}
+        </div>
+
+        <div class="pt-2">
+            <label class="block text-slate-400 text-sm mb-1">Editorial (Escriba para buscar o crear)</label>
+            <input type="text" 
+                   name="editorial_manual" 
+                   list="editoriales_list" 
+                   required
+                   placeholder="Ej: Alfaguara, Santillana..."
+                   class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            
+            <datalist id="editoriales_list">
+                {% for ed in editoriales %}
+                    <option value="{{ ed.nombre }}">
+                {% endfor %}
+            </datalist>
+            <p class="text-[10px] text-slate-500 mt-1 italic">
+                * Si la editorial no existe, el sistema la registrará automáticamente.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Año de Publicación</label>
+                <div class="[&>input]:w-full [&>input]:bg-slate-900 [&>input]:border-slate-700 [&>input]:rounded-xl [&>input]:p-3 [&>input]:text-white">
+                    {{ form.anio_publicacion }}
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-slate-400 text-sm mb-1">Código de Inventario</label>
+                <div class="[&>input]:w-full [&>input]:bg-slate-900 [&>input]:border-slate-700 [&>input]:rounded-xl [&>input]:p-3 [&>input]:text-white">
+                    {{ form.codigo_inventario }}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="flex gap-4 mt-8 pt-4 border-t border-slate-700">
+            <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-900/20">
+                Guardar Ejemplar
+            </button>
+            <a href="{% url 'gestion_libros' %}" class="flex-1 bg-slate-700 text-slate-300 px-6 py-3 rounded-xl font-bold text-center hover:bg-slate-600 transition-colors">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

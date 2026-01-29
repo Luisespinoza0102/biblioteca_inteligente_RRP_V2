@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Inventario por Estante</title>
+    <style>
+        @page {
+            size: letter landscape; /* Horizontal para que quepa más información */
+            margin: 2cm 1.5cm 2.5cm 1.5cm;
+            @frame footer_frame {
+                -pdf-frame-content: footerContent;
+                bottom: 1cm;
+                margin-left: 1.5cm;
+                margin-right: 1.5cm;
+                height: 1cm;
+            }
+        }
+
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #2d3748;
+        }
+
+        /* Encabezado */
+        .header-table {
+            width: 100%;
+            border-bottom: 3px solid #1e3a8a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+        .brand-name {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+        .report-info {
+            text-align: right;
+            font-size: 9pt;
+            color: #718096;
+        }
+
+        /* Dashboard de Totales (KPIs) */
+        .summary-container {
+            margin-bottom: 25px;
+        }
+        .kpi-box {
+            background-color: #ebf8ff;
+            border: 1px solid #bee3f8;
+            padding: 10px;
+            width: 30%;
+            text-align: center;
+            border-radius: 8px;
+        }
+        .kpi-value {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #2b6cb0;
+            display: block;
+        }
+        .kpi-label {
+            font-size: 8pt;
+            color: #4a5568;
+            text-transform: uppercase;
+        }
+
+        /* Resumen por Categoría */
+        .resumen-table {
+            width: 40%;
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
+        }
+        .resumen-table th {
+            background-color: #edf2f7;
+            padding: 5px;
+            font-size: 9pt;
+            border-bottom: 1px solid #cbd5e0;
+        }
+
+        /* Tabla Principal */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-table th {
+            background-color: #1e3a8a;
+            color: white;
+            padding: 10px 5px;
+            font-size: 9pt;
+            text-align: left;
+        }
+        .data-table td {
+            padding: 8px 5px;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 8.5pt;
+        }
+        .data-table tr:nth-child(even) { background-color: #f7fafc; }
+
+        .tag-estado {
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 7pt;
+            font-weight: bold;
+            background-color: #e2e8f0;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 8pt;
+            color: #a0aec0;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <table class="header-table">
+        <tr>
+            <td class="brand-name">BIBLIOTECA INTELIGENTE</td>
+            <td class="report-info">
+                <strong>REPORTE DE INVENTARIO</strong><br>
+                Estante: {{ estante|upper }}<br>
+                Emisión: {{ fecha|date:"d/m/Y" }}
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%" class="summary-container">
+        <tr>
+            <td class="kpi-box">
+                <span class="kpi-value">{{ total_libros }}</span>
+                <span class="kpi-label">Títulos Únicos</span>
+            </td>
+            <td width="5%"></td>
+            <td class="kpi-box">
+                <span class="kpi-value">{{ total_ejemplares }}</span>
+                <span class="kpi-label">Ejemplares Totales</span>
+            </td>
+            <td width="60%"></td>
+        </tr>
+    </table>
+
+    <h3 style="color: #4a5568; border-left: 4px solid #1e3a8a; padding-left: 10px;">Distribución por Categoría</h3>
+    <table class="resumen-table">
+        <thead>
+            <tr>
+                <th>Cutter / Clasificación</th>
+                <th width="30%">Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in resumen %}
+            <tr>
+                <td style="padding: 5px;">{{ r.libro__cutter }}</td>
+                <td style="text-align: center; font-weight: bold;">{{ r.total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3 style="color: #4a5568; border-left: 4px solid #1e3a8a; padding-left: 10px;">Listado Detallado de Existencias</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th width="15%">Código Inv.</th>
+                <th width="40%">Título del Libro</th>
+                <th width="15%">Cutter</th>
+                <th width="15%">Nivel</th>
+                <th width="15%">Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in detallada %}
+            <tr>
+                <td style="font-family: monospace;">{{ d.codigo_inventario }}</td>
+                <td><strong>{{ d.libro.titulo }}</strong></td>
+                <td>{{ d.libro.cutter }}</td>
+                <td>{{ d.ubicacion.nivel }}</td>
+                <td><span class="tag-estado">{{ d.estado }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div id="footerContent" class="footer">
+        Este documento es un registro oficial del inventario físico de la biblioteca.<br>
+        Página <pdf:pagenumber> de <pdf:pagecount>
+    </div>
+
+</body>
+</html>

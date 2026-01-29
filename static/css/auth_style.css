@@ -1,0 +1,337 @@
+/* =========================
+   RESET
+========================= */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+}
+
+
+/* =========================
+   FONDO PANTALLA COMPLETA
+========================= */
+.auth-wrapper{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:url('/static/img/fondo_biblioteca.jpg') no-repeat center center;
+    background-size:cover;
+}
+
+
+/* =========================
+   TARJETA GLASS (MÁS TRANSPARENTE)
+========================= */
+.glass-card{
+    width:420px;
+    padding:40px 35px;
+
+    background:rgba(255,255,255,0.45);   /* MÁS TRANSPARENTE */
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    border-radius:35px;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+
+    text-align:center;
+}
+
+
+/* =========================
+   CABECERA CENTRADA
+========================= */
+.header-text{
+    margin-bottom:25px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+
+/* TEXTO BIENVENIDO */
+.welcome-text{
+    font-size:1.1rem;
+    font-weight:600;
+    color:#1f2937;
+    margin-bottom:15px;
+    text-align:center;
+}
+
+
+/* LOGO RRP PERFECTAMENTE CENTRADO */
+.logo-img{
+    height:120px;
+    margin:0 auto 10px auto;
+    display:block;
+}
+
+
+/* SUBTÍTULO */
+.sub-header{
+    font-size:1.05rem;
+    font-weight:700;
+    color:#111827;
+    text-align:center;
+}
+
+
+/* =========================
+   FORMULARIO
+========================= */
+.form-row{
+    display:flex;
+    align-items:center;
+    margin-bottom:22px;
+}
+
+.form-label{
+    width:28%;
+    text-align:right;
+    padding-right:12px;
+    font-weight:700;
+    color:#374151;
+}
+
+
+/* CONTENEDOR INPUT */
+.input-wrapper{
+    width:72%;
+    position:relative;
+}
+
+
+/* INPUTS */
+.custom-input{
+    width:100%;
+    padding:14px 15px 14px 45px;   /* espacio para icono */
+    border-radius:12px;
+    border:2px solid #f59e0b;
+    outline:none;
+    font-size:.95rem;
+}
+
+.custom-input::placeholder{
+    color:#9ca3af;
+}
+
+
+/* ICONOS DENTRO DEL INPUT BIEN CENTRADOS */
+.input-icon{
+    position:absolute;
+    left:15px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#9ca3af;
+    font-size:1rem;
+}
+
+.fa-lock{
+    position:absolute;
+    left:15px;
+    top:35%;
+    transform: translateY(-50%);
+    color:#9ca3af;
+    font-size:1rem;
+}
+
+
+
+/* =========================
+   OLVIDASTE CONTRASEÑA
+========================= */
+.forgot-link{
+    display:block;
+    text-align:right;
+    font-size:.8rem;
+    color:#F0A500;
+    font-weight:600;
+    margin-top:6px;
+    text-decoration:none;
+}
+
+
+/* =========================
+   BOTÓN CENTRADO PERFECTO
+========================= */
+.form-row:last-child .input-wrapper{
+    display:flex;
+    justify-content:center;
+}
+
+.btn-submit{
+    width:300px;
+    padding:14px 45px;
+    border:none;
+    position: relative;
+    border-radius:20px;
+    background:#f59e0b;
+    color:white;
+    font-weight:800;
+    font-size:1rem;
+    cursor:pointer;
+    left: -20%;
+    box-shadow:0 8px 20px rgba(245,158,11,.4);
+    transition:0.3s ease;
+}
+
+.btn-submit:hover{
+    background:#d97706;
+}
+
+
+/* =========================
+   REGISTRO
+========================= */
+.glass-card > div:last-child{
+    margin-top:25px;
+}
+/* =========================
+   REGISTRO - CARD A LA DERECHA
+========================= */
+
+/* =========================
+   REGISTRO - CARD PEGADA A LA DERECHA
+   CON ESQUINAS SUPERIOR E INFERIOR IZQUIERDA REDONDEADAS
+========================= */
+
+.registre{
+    justify-content:flex-end;     /* pega la card al borde derecho */
+    align-items:center;
+    padding-right:0;              /* sin margen derecho */
+    height:100vh;
+}
+
+.register-card{
+    width:520px;
+    height:100hv;
+    padding:45px 40px;
+
+    background:rgba(255,255,255,0.40);  /* más transparente */
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+
+    /* border-radius solo en izquierda */
+    border-top-left-radius:35px;
+    border-bottom-left-radius:35px;
+    border-top-right-radius:0;
+    border-bottom-right-radius:0;
+
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+/* CABECERA REGISTRO */
+.register-header{
+    text-align:center;
+    margin-bottom:35px;
+}
+
+.top-logo{
+    height:90px;
+    margin-bottom:15px;
+    margin-top: 50px;
+    position: relative;
+    left: 30%;
+}
+
+.register-title{
+    font-size:2.2rem;
+    font-weight:800;
+    color:#111827;
+    margin-bottom:10px;
+}
+
+.register-text{
+    font-size:0.95rem;
+    color:#374151;
+    line-height:1.4;
+}
+
+
+/* BOTON CENTRADO */
+.center-btn{
+    display:flex;
+    justify-content:center;
+}
+
+
+/* FOOTER REGISTRO */
+.register-footer{
+    margin-top:25px;
+    font-size:0.9rem;
+    color:#374151;
+    text-align:center;
+}
+
+.register-footer a{
+    color:#f59e0b;
+    font-weight:800;
+    text-decoration:none;
+}
+
+
+/* RESPONSIVE */
+@media(max-width:900px){
+    .auth-wrapper{
+        justify-content:center;
+        padding-right:0;
+    }
+
+    .register-card{
+        width:90%;
+    }
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media(max-width:600px){
+
+    .glass-card{
+        width:90%;
+        padding:30px 20px;
+    }
+
+    .logo-img{
+        height:100px;
+    }
+
+    .form-row{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .form-label{
+        width:100%;
+        text-align:left;
+        margin-bottom:6px;
+    }
+
+    .input-wrapper{
+        width:100%;
+    }
+
+    .form-row:last-child .input-wrapper{
+        justify-content:center;
+    }
+}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+        <div class="bg-slate-900 p-4 text-white">
+            <h3 class="text-lg font-bold">Editar Ejemplar: {{ ejemplar.codigo_inventario }}</h3>
+            <p class="text-xs text-slate-400">Libro: {{ ejemplar.libro.titulo }}</p>
+        </div>
+        
+        <form method="POST" class="p-6 space-y-4">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Código de Inventario</label>
+                    <input type="text" name="codigo" value="{{ ejemplar.codigo_inventario }}" 
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Estado del Ejemplar</label>
+                    <select name="estado" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                        <option value="DISPONIBLE" {% if ejemplar.estado == 'DISPONIBLE' %}selected{% endif %}>Disponible</option>
+                        <option value="PRESTADO" {% if ejemplar.estado == 'PRESTADO' %}selected{% endif %}>Prestado</option>
+                        <option value="MANTENIMIENTO" {% if ejemplar.estado == 'MANTENIMIENTO' %}selected{% endif %}>Mantenimiento / Dañado</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Estante (Grupo)</label>
+                    <select id="select-estante" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border bg-gray-50 font-bold">
+                        <option value="">-- Seleccione Estante --</option>
+                        {% regroup ubicaciones by estante as estantes_list %}
+                        {% for estante in estantes_list %}
+                            <option value="{{ estante.grouper }}" 
+                                {% if ejemplar.ubicacion.estante == estante.grouper %}selected{% endif %}>
+                                {{ estante.grouper }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nivel / Peldaño</label>
+                    <select id="select-nivel" name="ubicacion" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                        <option value="{{ ejemplar.ubicacion.id }}">
+                            {{ ejemplar.ubicacion.nivel }} (Actual)
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex gap-3 pt-6 border-t border-gray-100">
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition shadow-md">
+                    <i class="fas fa-save mr-2"></i>Guardar Cambios
+                </button>
+                <a href="{% url 'lista_ejemplares' ejemplar.libro.id %}" class="bg-gray-100 text-gray-600 px-6 py-2 rounded-lg font-bold hover:bg-gray-200 transition">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Script cargado y listo"); // Esto debe salir en la consola (F12)
+
+        const estanteSelect = document.getElementById('select-estante');
+        const nivelSelect = document.getElementById('select-nivel');
+
+        estanteSelect.addEventListener('change', function() {
+            const estanteNombre = this.value;
+            console.log("Estante seleccionado:", estanteNombre);
+
+            nivelSelect.innerHTML = '<option value="">Cargando niveles...</option>';
+
+            if (!estanteNombre) {
+                nivelSelect.innerHTML = '<option value="">-- Seleccione Estante --</option>';
+                return;
+            }
+
+            // Usamos una ruta relativa para que sea más flexible
+            // Si esto falla, intenta con: '/catalogo/obtener-niveles/' 
+            fetch(`/catalogo/obtener-niveles/?estante=${encodeURIComponent(estanteNombre)}`)
+                .then(response => {
+                    console.log("Respuesta del servidor:", response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Datos recibidos:", data);
+                    nivelSelect.innerHTML = '<option value="">-- Seleccione un Nivel --</option>';
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.id;
+                        option.textContent = item.nivel;
+                        nivelSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error en Fetch:', error);
+                    nivelSelect.innerHTML = '<option value="">Error al cargar</option>';
+                });
+        });
+    });
+</script>
+{% endblock %}

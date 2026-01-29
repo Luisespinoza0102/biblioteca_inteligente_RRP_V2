@@ -1,22 +1,29 @@
-"""
-URL configuration for config project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from core.views import dispatch_dashboard # La vista que decide a dónde va el usuario al loguearse
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # Administración de Django (Backend puro)
+    path('admin_django/', admin.site.urls),
+
+    # Módulo de Autenticación y Dashboards
+    path('', include('core.urls')),
+
+    # Módulo de Catálogo y Libros
+    path('catalogo/', include('catalog.urls')),
+
+    # Módulo de Préstamos y Solicitudes
+    path('prestamos/', include('loans.urls')),
+
+    # Módulo de Reportes e Inventario
+    path('reportes/', include('reports.urls')),
+
+    # Ruta de redirección inteligente después del Login
+    path('dashboard/', dispatch_dashboard, name='dispatch_dashboard'),
 ]
+
+# Configuración para ver las imágenes de los libros en desarrollo
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
