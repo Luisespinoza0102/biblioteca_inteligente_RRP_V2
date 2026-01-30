@@ -1,22 +1,27 @@
-from django.shortcuts import render, redirect
+#------------- IMPORTACIONES ------------------#
+# lIBRERIAS ESTANDAR
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
-from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db import transaction, IntegrityError
+from django.contrib.auth.views import PasswordChangeView 
+from django.contrib.messages.views import SuccessMessageMixin 
+from django.urls import reverse_lazy 
 from django.db.models import Count, Q, Case, When, IntegerField
+# IMPORTACIONES LOCALES
 from .forms import RegistroUsuarioForm
 from .models import UsuarioPermitido, Perfil, ReferenciaPersonal
 from loans.models import Prestamo, Notificacion
 from catalog.models import Libro
 from recommendation.engine import obtener_recomendaciones
 from recommendation.models import HistorialBusqueda
-from django.contrib.auth.views import PasswordChangeView 
-from django.contrib.messages.views import SuccessMessageMixin 
-from django.urls import reverse_lazy 
 from .forms import FotoPerfilForm
 
+# ----------------------- VISTAS -------------------#
+
+# AUTENTICACIÓN
 def registro(request):
     if request.method == 'POST':
         form = RegistroUsuarioForm(request.POST, request.FILES)
@@ -31,22 +36,17 @@ def registro(request):
                 # BUSCAMOS al usuario que el admin ya creó (su username es su DNI)
                 user = User.objects.get(username=dni_ingresado)
                 perfil = user.perfil # Accedemos al perfil vinculado (dni_carnet)
-
-                # Actualizamos la seguridad
                 user.set_password(nueva_clave)
                 user.save()
-
                 # Actualizamos el perfil
                 perfil.estado = 'ACTIVO'
                 if nuevo_tel:
                     perfil.telefono = nuevo_tel
-                
-                # Guardamos la foto
+
                 if nueva_foto:
                     perfil.foto_perfil = nueva_foto
                     
                 perfil.save()
-
                 messages.success(request, "¡Cuenta activada! Ya puedes iniciar sesión.")
                 return redirect('login')
 
@@ -57,6 +57,7 @@ def registro(request):
     
     return render(request, 'core/registro.html', {'form': form})
 
+# NAVEGACIÓN Y DASHBOARD
 @login_required
 def dispatch_dashboard(request):
     if request.user.perfil.rol == 'ADMIN': return redirect('dashboard_admin')
@@ -81,7 +82,6 @@ def dashboard_admin(request):
     vencidos_count = 0 
     for p in Prestamo.objects.filter(estado='APROBADO'):
         if p.esta_vencido: vencidos_count += 1
-    
     # Buscamos libros que tengan 0 ejemplares DISPONIBLES
     libros_con_stock = Libro.objects.annotate(
         cantidad_disponible=Count(
@@ -89,7 +89,6 @@ def dashboard_admin(request):
             filter=Q(ejemplares__estado='DISPONIBLE')
         )
     )
-    
     # Filtramos solo los que están en 0 o nivel crítico (ej. menos de 2)
     libros_alerta = libros_con_stock.filter(cantidad_disponible__lte=1).order_by('cantidad_disponible')
     
@@ -99,6 +98,8 @@ def dashboard_admin(request):
         'vencidos': vencidos_count
     })
 
+# CONFIGURACIÓN DE USUARIOS
+@login_required
 def gestion_usuarios(request):
     if request.method == 'POST':
         # Captura de datos básicos
@@ -115,7 +116,6 @@ def gestion_usuarios(request):
 
         try:
             with transaction.atomic():
-                # El DNI es el username para evitar errores por nombres iguales
                 nuevo_user = User.objects.create_user(
                     username=u_dni, 
                     email=u_email, 
@@ -124,8 +124,7 @@ def gestion_usuarios(request):
                 )
                 
                 u_foto = request.FILES.get('foto_perfil')
-                
-                # Crear Perfil (Usando tu modelo exacto)
+
                 perfil = Perfil.objects.create(
                     usuario=nuevo_user,
                     dni_carnet=u_dni,
@@ -157,37 +156,6 @@ def gestion_usuarios(request):
     usuarios = Perfil.objects.all().select_related('usuario')
     return render(request, 'core/gestion_usuarios.html', {'usuarios': usuarios})
 
-@login_required
-def mis_notificaciones(request):
-    notificaciones = request.user.notificaciones.all().order_by('-fecha')
-    
-    # Renderizamos primero
-    response = render(request, 'core/notificaciones.html', {'notificaciones': notificaciones})
-    
-    return response
-
-@login_required
-def marcar_leida(request, noti_id):
-    noti = Notificacion.objects.get(id=noti_id, usuario=request.user)
-    noti.leido = True
-    noti.save()
-    return redirect('mis_notificaciones')
-
-@login_required
-def mi_historial(request):
-    # Historial de Búsquedas (para que el usuario sepa qué sabe el sistema de él)
-    busquedas = HistorialBusqueda.objects.filter(usuario=request.user).order_by('-fecha')[:20]
-    
-    # Historial de Préstamos (Libros ya devueltos)
-    prestamos_pasados = Prestamo.objects.filter(
-        usuario=request.user, 
-        estado__in=['DEVUELTO']
-    ).order_by('-fecha_devolucion_real')
-
-    return render(request, 'core/historial.html', {
-        'busquedas': busquedas,
-        'prestamos_pasados': prestamos_pasados
-    })
 
 @login_required
 def editar_usuario(request, user_id):
@@ -205,10 +173,7 @@ def editar_usuario(request, user_id):
         perfil.telefono = request.POST.get('telefono')
         perfil.direccion = request.POST.get('direccion')
         perfil.rol = request.POST.get('rol')
-        
-        # CORRECCIÓN: Si 'estado' no viene en el POST, mantenemos el que ya tiene
         perfil.estado = request.POST.get('estado', perfil.estado) 
-
         if request.FILES.get('foto_perfil'):
             perfil.foto_perfil = request.FILES.get('foto_perfil')
 
@@ -220,10 +185,8 @@ def editar_usuario(request, user_id):
 
 @login_required
 def mi_perfil(request):
-    """Permite al usuario cambiar su propia foto de perfil"""
     perfil = request.user.perfil
     if request.method == 'POST':
-        # Solo procesamos la foto de perfil para el usuario común
         if request.FILES.get('foto_perfil'):
             perfil.foto_perfil = request.FILES.get('foto_perfil')
             perfil.save()
@@ -242,3 +205,34 @@ class CambiarPasswordView(SuccessMessageMixin, PasswordChangeView):
         if self.request.user.perfil.rol == 'ADMIN':
             return reverse_lazy('dashboard_admin')
         return reverse_lazy('dashboard_usuario')
+
+# GESTIÓN DE NOTIFICACIONES
+@login_required
+def mis_notificaciones(request):
+    notificaciones = request.user.notificaciones.all().order_by('-fecha')
+    response = render(request, 'core/notificaciones.html', {'notificaciones': notificaciones})
+    return response
+
+@login_required
+def marcar_leida(request, noti_id):
+    noti = Notificacion.objects.get(id=noti_id, usuario=request.user)
+    noti.leido = True
+    noti.save()
+    return redirect('mis_notificaciones')
+
+@login_required
+def mi_historial(request):
+    busquedas = HistorialBusqueda.objects.filter(usuario=request.user).order_by('-fecha')[:20]
+    prestamos_pasados = Prestamo.objects.filter(
+        usuario=request.user, 
+        estado__in=['DEVUELTO']
+    ).order_by('-fecha_devolucion_real')
+
+    return render(request, 'core/historial.html', {
+        'busquedas': busquedas,
+        'prestamos_pasados': prestamos_pasados
+    })
+
+# FAKE ADMIN
+def vista_error_fake(request):
+    return render(request, 'core/fake_404.html', status=404)

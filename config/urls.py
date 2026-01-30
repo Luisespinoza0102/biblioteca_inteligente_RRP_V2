@@ -2,11 +2,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from core.views import dispatch_dashboard # La vista que decide a dónde va el usuario al loguearse
+from core.views import dispatch_dashboard, vista_error_fake
 
 urlpatterns = [
-    # Administración de Django (Backend puro)
-    path('admin_django/', admin.site.urls),
+    # Administración de Django
+    path('ramon_ruiz_2026/', admin.site.urls),
+    
+    path('admin_django/', vista_error_fake),
 
     # Módulo de Autenticación y Dashboards
     path('', include('core.urls')),

@@ -19,7 +19,7 @@ ESTADOS_USUARIOS = (
 )
 
 class Perfil(models.Model):
-    # Usamos UUID como ID principal para mayor seguridad y profesinalismo
+    # Usamos UUID como ID principal para mayor seguridad
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')

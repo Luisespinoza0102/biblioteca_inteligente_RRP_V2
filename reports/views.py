@@ -1,16 +1,20 @@
+#---------------- IMPORTACIONES -----------#
+# LIBRERIAS ESTANDAR
 from django.shortcuts import render
 from django.db.models import Count, Q
 from django.utils import timezone
 from datetime import datetime
+# IMPORTACIONES LOCALES
 from .utils import render_to_pdf
 from catalog.models import Ejemplar, Ubicacion
 from loans.models import Prestamo
 
-# --- PORTAL PRINCIPAL ---
+#------------------------ VISTAS --------------#
+#PORTAL PRINCIPAL
 def portal_reportes(request):
     return render(request, 'reports/portal.html')
 
-# --- 1. INVENTARIO POR ESTANTE ---
+#INVENTARIO POR ESTANTE
 def get_data_estante(estante_query):
     if not estante_query:
         return [], [], 0, 0
@@ -54,7 +58,7 @@ def pdf_inventario_estante(request):
     }
     return render_to_pdf('reports/pdf_base_estante.html', context)
 
-# --- 2. PRÉSTAMOS MENSUALES ---
+# PRÉSTAMOS MENSUALES 
 def get_data_mensual(mes_anio):
     if not mes_anio:
         return []
@@ -118,7 +122,7 @@ def pdf_prestamos_retrasados(request):
         'titulo': 'Reporte de Morosidad / Retrasos',
         'subtitulo': f'Filtrado por: {mes}' if mes else 'Reporte General',
         'prestamos': prestamos,
-        'es_retraso': True, # Bandera para pintar rojo en el PDF
+        'es_retraso': True, 
         'fecha': timezone.now()
     }
     return render_to_pdf('reports/pdf_base_lista.html', context)
