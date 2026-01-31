@@ -130,16 +130,6 @@
 },
 {
   "model": "core.referenciapersonal",
-  "pk": 6,
-  "fields": {
-    "perfil": "6ff58ddc-ba6d-4e3d-ba79-da90c8c19419",
-    "nombre": "maria lopez",
-    "telefono": "123456",
-    "relacion": "madre"
-  }
-},
-{
-  "model": "core.referenciapersonal",
   "pk": 7,
   "fields": {
     "perfil": "ac19d601-c195-472e-997b-30eb4a4fdee7",
