@@ -26,37 +26,35 @@ def registro(request):
     if request.method == 'POST':
         form = RegistroUsuarioForm(request.POST, request.FILES)
         if form.is_valid():
-            # Sacamos el DNI que el usuario puso en el formulario
             dni_ingresado = form.cleaned_data['dni']
+            nombre_ingresado = form.cleaned_data['nombre'] # <--- Extraemos el nombre
             nueva_clave = form.cleaned_data['password']
-            nuevo_tel = form.cleaned_data['telefono']
-            nueva_foto = form.cleaned_data.get('foto_perfil')
+            nuevo_tel = form.cleaned_data.get('telefono')
 
             try:
-                # BUSCAMOS al usuario que el admin ya creó (su username es su DNI)
+                # Buscamos al usuario pre-creado
                 user = User.objects.get(username=dni_ingresado)
-                perfil = user.perfil # Accedemos al perfil vinculado (dni_carnet)
+                perfil = user.perfil
                 user.set_password(nueva_clave)
+                user.first_name = nombre_ingresado 
                 user.save()
-                # Actualizamos el perfil
+
                 perfil.estado = 'ACTIVO'
                 if nuevo_tel:
                     perfil.telefono = nuevo_tel
-
-                if nueva_foto:
-                    perfil.foto_perfil = nueva_foto
-                    
                 perfil.save()
-                messages.success(request, "¡Cuenta activada! Ya puedes iniciar sesión.")
+
+                messages.success(request, "¡Cuenta activada con éxito!")
                 return redirect('login')
 
             except User.DoesNotExist:
-                messages.error(request, "Este DNI no está autorizado por el administrador.")
+                messages.error(request, "Este DNI no está autorizado.")
+        else:
+            print(form.errors) 
     else:
         form = RegistroUsuarioForm()
     
     return render(request, 'core/registro.html', {'form': form})
-
 # NAVEGACIÓN Y DASHBOARD
 @login_required
 def dispatch_dashboard(request):
