@@ -32,6 +32,32 @@ html,body{
     background-size:cover;
 }
 
+.messages-container {
+    margin-bottom: 20px;
+}
+
+.alert {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
+    backdrop-filter: blur(5px);
+}
+
+/* Estilo para el éxito (verde) */
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+    border: 1px solid #28a745;
+}
+
+/* Estilo para el error (rojo) */
+.alert-error {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+    border: 1px solid #dc3545;
+}
 
 /* =========================
    TARJETA GLASS (MÁS TRANSPARENTE)
@@ -303,35 +329,118 @@ html,body{
 
 
 /* =========================
-   RESPONSIVE
+   RESPONSIVE MOBILE 
 ========================= */
-@media(max-width:600px){
+@media (max-width: 480px){
 
+    /* Fondo */
+    .auth-wrapper{
+        padding: 15px;
+        align-items: flex-start;
+    }
+
+    /* Card */
     .glass-card{
-        width:90%;
-        padding:30px 20px;
+        width: 100%;
+        max-width: 420px;
+        padding: 25px 22px;
+        border-radius: 25px;
+        margin-top: 20px;
+    }
+
+    /* Textos */
+    .welcome-text{
+        font-size: 1rem;
+        margin-bottom: 12px;
+    }
+
+    .sub-header{
+        font-size: .95rem;
     }
 
     .logo-img{
-        height:100px;
+        height: 95px;
+        margin-bottom: 8px;
     }
 
+    /* Formulario: labels arriba */
     .form-row{
-        flex-direction:column;
-        align-items:stretch;
+        flex-direction: column;
+        align-items: stretch;
+        margin-bottom: 18px;
     }
 
     .form-label{
-        width:100%;
-        text-align:left;
-        margin-bottom:6px;
+        width: 100%;
+        text-align: left;
+        padding-right: 0;
+        margin-bottom: 6px;
+        font-size: .85rem;
     }
 
     .input-wrapper{
-        width:100%;
+        width: 100%;
+    }
+
+    .custom-input{
+        padding: 14px 14px 14px 42px;
+        font-size: .9rem;
+        border-radius: 14px;
+    }
+
+    /* Iconos centrados */
+    .input-icon,
+    .fa-lock{
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    /* Forgot password */
+    .forgot-link{
+        font-size: .75rem;
+        margin-top: 5px;
+    }
+
+    /* Botón FULL WIDTH */
+    .btn-submit{
+        width: 100%;
+        left: 0;
+        padding: 14px;
+        border-radius: 16px;
+        font-size: .95rem;
     }
 
     .form-row:last-child .input-wrapper{
-        justify-content:center;
+        justify-content: center;
+    }
+
+    /* Registro */
+    .glass-card > div:last-child{
+        margin-top: 20px;
+        font-size: .85rem;
+    }
+}
+
+/* =========================
+   RESPONSIVE REGISTRO (MOBILE FIRST)
+========================= */
+@media (max-width: 480px){
+
+    /* Wrapper: quitar pegado a la derecha */
+    .auth-wrapper.registre{
+        justify-content: center;
+        align-items: flex-start;
+        padding: 15px;
+    }
+
+    /* Card registro */
+
+    .register-card{
+        width: 100%;
+        max-width: 420px;
+        height: auto;
+        padding: 28px 22px;
+        border-radius: 25px;
     }
 }

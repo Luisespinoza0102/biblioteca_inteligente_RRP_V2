@@ -50,7 +50,7 @@ def registro(request):
             except User.DoesNotExist:
                 messages.error(request, "Este DNI no está autorizado.")
         else:
-            print(form.errors) 
+            messages.error(request, "Por favor corrige los errores en el formulario.") 
     else:
         form = RegistroUsuarioForm()
     
