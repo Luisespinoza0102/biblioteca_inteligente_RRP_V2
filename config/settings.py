@@ -19,7 +19,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-(aghtbk01(9_m#^^7=)-1vx(z&
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 #ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost,0.0.0.0').split(',')
-ALLOWED_HOST = ['*']
+ALLOWED_HOST = ['ShotoTodoroki22.pythonanywhere.com']
 
 
 # Application definition
